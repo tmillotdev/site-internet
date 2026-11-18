@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Timothée Millot Développement · Sur mesure, automatisation, IA</title>
+  <meta name="description" content="Développement sur mesure, automatisation de flux et intelligence artificielle pour les indépendants, TPE et PME.">
+
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <p class="counter mono" aria-hidden="true"><span class="counter__now">01</span> / <span class="counter__total">06</span></p>
+
+  <main class="stage">
+    <!-- Le « monde » : tous les écrans empilés. L'étoile du logo part en premier,
+         trace un trait noir jusqu'à l'écran suivant et y joue une surprise différente. -->
+    <div class="world">
+
+      <svg class="ink" aria-hidden="true">
+        <defs>
+          <symbol id="star4" viewBox="270 28 44 44">
+            <path class="star-shape" d="M292 28 Q294 48 314 50 Q294 52 292 72 Q290 52 270 50 Q290 48 292 28 Z" />
+          </symbol>
+        </defs>
+        <path class="ink__travel" />
+      </svg>
+      <svg class="pen" viewBox="270 28 44 44" aria-hidden="true">
+        <path d="M292 28 Q294 48 314 50 Q294 52 292 72 Q290 52 270 50 Q290 48 292 28 Z" />
+      </svg>
+
+      <!-- 01 · Accueil -->
+      <section id="accueil" class="screen screen--hero" data-fx="home">
+        <img class="hero__logo" src="assets/logos/logo-horizontal-sans-etoile.svg"
+             alt="Timothée Millot Développement" width="707" height="169">
+        <p class="hero__sub reveal">Sur mesure, automatisation et IA pour les indépendants, TPE et PME.</p>
+        <p class="scroll-hint reveal"><span class="mono">scroll</span> <span class="scroll-hint__arrow">↓</span></p>
+      </section>
+
+      <!-- 02 · Sur mesure : l'étoile éclate en 4 et découpe un cadre ajusté au texte -->
+      <section id="sur-mesure" class="screen" data-fx="frame">
+        <div class="scene">
+          <p class="scene__key mono reveal">sur_mesure</p>
+          <h2 class="big"><span class="line reveal">Des outils taillés</span> <span class="line reveal">pour votre façon</span> <span class="line reveal accent">de travailler.</span></h2>
+          <p class="small reveal">Applications internes, tableaux de bord, sites, connecteurs entre vos logiciels.</p>
+        </div>
+      </section>
+
+      <!-- 03 · Automatisation : la comète balaie les tâches répétitives et révèle le titre -->
+      <section id="automatisation" class="screen" data-fx="comet">
+        <div class="scene">
+          <div class="chores mono" aria-hidden="true">relance_client.send()     relance_client.send()     relance_client.send()
+saisie_facture(#0412)     saisie_facture(#0413)     saisie_facture(#0414)
+export.csv → copier → coller → export.csv → copier → coller
+relance_client.send()     relance_client.send()     relance_client.send()
+synchro_agenda()          synchro_agenda()          synchro_agenda()
+saisie_facture(#0415)     saisie_facture(#0416)     saisie_facture(#0417)
+export.csv → copier → coller → export.csv → copier → coller
+relance_client.send()     relance_client.send()     relance_client.send()
+synchro_agenda()          synchro_agenda()          synchro_agenda()
+saisie_facture(#0418)     saisie_facture(#0419)     saisie_facture(#0420)</div>
+          <p class="scene__key mono reveal">automatisation</p>
+          <h2 class="big fx-title"><span class="line">Les tâches</span> <span class="line">répétitives</span> <span class="line accent">disparaissent.</span></h2>
+          <p class="small reveal">Relances, saisies, exports, synchronisations. Vous gardez la main, la machine fait le reste.</p>
+        </div>
+      </section>
+
+      <!-- 04 · IA : l'étoile sème des points qui se relient en réseau -->
+      <section id="ia" class="screen" data-fx="network">
+        <div class="scene">
+          <p class="scene__key mono reveal">ia</p>
+          <h2 class="big"><span class="line reveal">Une IA branchée</span> <span class="line reveal accent">sur vos données.</span></h2>
+          <p class="small reveal">Tri des mails, rédaction, extraction de documents, recherche dans vos fichiers.</p>
+        </div>
+      </section>
+
+      <!-- 05 · Qui je suis : l'étoile seule tourne en orbite autour du titre -->
+      <section id="qui" class="screen" data-fx="orbit">
+        <div class="scene">
+          <p class="scene__key mono reveal">qui_je_suis</p>
+          <h2 class="big big--m"><span class="line reveal">Un seul interlocuteur,</span> <span class="line reveal">du premier échange</span> <span class="line reveal accent">à la mise en service.</span></h2>
+          <p class="small reveal">Timothée Millot, développeur indépendant. Je comprends d’abord votre métier, puis je construis l’outil le plus simple qui règle vraiment le problème.</p>
+        </div>
+      </section>
+
+      <!-- 06 · Contact : toute la constellation du parcours s'allume -->
+      <section id="contact" class="screen" data-fx="constellation">
+        <div class="scene">
+          <p class="scene__key mono reveal">contact</p>
+          <h2 class="big"><span class="line reveal">Parlons de</span> <span class="line reveal accent">votre projet.</span></h2>
+          <ul class="contact">
+            <li class="reveal"><span class="mono contact__key">mail:</span> <a href="mailto:contact@exemple.fr">contact@exemple.fr</a></li>
+            <li class="reveal"><span class="mono contact__key">tél:</span> <a href="tel:+33600000000">06 00 00 00 00</a></li>
+          </ul>
+        </div>
+        <footer class="site-footer reveal">
+          <span>© 2026 Timothée Millot Développement</span>
+          <a href="mentions-legales.html">Mentions légales</a>
+        </footer>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="js/vendor/gsap.min.js"></script>
+  <script src="js/vendor/Observer.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

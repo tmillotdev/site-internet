@@ -1,0 +1,271 @@
+/* =========================================================
+   Timothée Millot Développement · v3 « l'étoile relie les écrans »
+   Les écrans sont empilés. L'étoile du logo trace un trait noir
+   jusqu'à l'écran suivant et y joue une surprise différente :
+   cadre découpé, comète, réseau, orbite, constellation.
+   ========================================================= */
+
+:root {
+  --ink: #0F172A;
+  --ink-soft: #475569;
+  --ink-faint: #94A3B8;
+  --ink-ghost: #CBD5E1;
+  --blue: #2F5BFF;
+  --paper: #FFFFFF;
+  --line: #E2E8F0;
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --gutter: clamp(16px, 4vw, 64px);
+  --text-w: min(74vw, 1040px);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, p, ul { margin: 0; }
+ul { padding: 0; list-style: none; }
+a { color: inherit; }
+
+.mono { font-family: var(--font-mono); }
+.accent { color: var(--blue); }
+
+/* ---------- Le monde qui descend ---------- */
+.world { position: relative; }
+.ink, .pen { display: none; }
+
+.js body { overflow: hidden; overscroll-behavior: none; }
+.js .stage { position: fixed; inset: 0; overflow: hidden; }
+.js .world { position: absolute; top: 0; left: 0; width: 100%; will-change: transform; }
+
+.screen {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 56px var(--gutter);
+  overflow: hidden;
+}
+
+/* ---------- Calque de l'étoile (dans le monde) ---------- */
+.js .ink {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 5;
+}
+.ink path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ink .ink__travel { visibility: hidden; }
+.ink .star-shape { fill: var(--blue); stroke: none; }
+
+/* effets */
+.ink .fx-line   { stroke: var(--ink); }
+.ink .fx-guide  { stroke: none; }
+.ink .fx-comet  { stroke-linecap: round; }
+.ink .fx-edge   { stroke: var(--ink-faint); }
+.ink .fx-dot    { fill: var(--ink); }
+.ink .fx-dot--blue { fill: var(--blue); }
+.ink .fx-orbit  { stroke: var(--ink); }
+.ink .fx-link   { stroke: var(--ink-faint); }
+.ink .fx-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .06em;
+  fill: var(--ink-faint);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: fill .2s ease;
+}
+.ink .fx-label:hover, .ink .fx-label.is-here { fill: var(--blue); }
+.ink .fx-const .star { pointer-events: auto; cursor: pointer; }
+
+.js .pen {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  fill: var(--blue);
+  z-index: 6;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.counter {
+  position: fixed;
+  right: var(--gutter);
+  bottom: 24px;
+  font-size: 12px;
+  letter-spacing: .08em;
+  color: var(--ink-faint);
+  z-index: 7;
+}
+.counter__now { color: var(--ink); }
+
+/* ---------- Un écran : bloc centré, texte aligné à gauche ---------- */
+.scene {
+  position: relative;
+  width: fit-content;
+  max-width: var(--text-w);
+  margin: 0 auto;
+  text-align: left;
+}
+.scene__key {
+  position: relative;
+  font-size: clamp(13px, 1.1vw, 16px);
+  color: var(--blue);
+  margin-bottom: clamp(14px, 2.4vh, 28px);
+}
+
+.big {
+  position: relative;
+  font-size: clamp(40px, 7vw, 120px);
+  font-weight: 600;
+  line-height: 1.0;
+  letter-spacing: -0.045em;
+}
+.big--m { font-size: clamp(34px, 5.4vw, 92px); }
+.big .line { display: block; }
+
+.small {
+  position: relative;
+  margin-top: clamp(18px, 3vh, 36px);
+  max-width: 44ch;
+  font-size: clamp(16px, 1.3vw, 20px);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* Automatisation : les tâches répétitives, balayées par la comète */
+.chores { display: none; }
+.js .chores {
+  display: block;
+  position: absolute;
+  inset: -8% -6%;
+  overflow: hidden;
+  font-size: clamp(11px, 1.05vw, 16px);
+  line-height: 2.2;
+  color: var(--ink-ghost);
+  white-space: pre;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---------- Accueil : gros logo centré + une ligne ---------- */
+.screen--hero { gap: clamp(18px, 3.4vh, 44px); text-align: center; }
+.hero__logo {
+  display: block;
+  width: clamp(310px, 84vw, 1240px);
+  height: auto;
+}
+.hero__sub {
+  max-width: 60ch;
+  font-size: clamp(15px, 1.5vw, 22px);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 22px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: .08em;
+  color: var(--ink-faint);
+}
+.scroll-hint__arrow {
+  display: inline-block;
+  margin-left: 6px;
+  color: var(--blue);
+  animation: nudge 1.8s ease-in-out infinite;
+}
+@keyframes nudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+/* ---------- Contact ---------- */
+.contact { margin-top: clamp(20px, 3.4vh, 44px); }
+.contact li {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 6px 0;
+}
+.contact__key { font-size: 13px; color: var(--ink-faint); min-width: 4ch; }
+.contact a {
+  font-size: clamp(22px, 2.6vw, 38px);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  text-decoration: none;
+  background-image: linear-gradient(var(--blue), var(--blue));
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size .35s ease, color .2s ease;
+}
+.contact a:hover,
+.contact a:focus-visible {
+  color: var(--blue);
+  background-size: 100% 2px;
+  outline: none;
+}
+
+.site-footer {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 22px;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  font-size: 13px;
+  color: var(--ink-faint);
+  z-index: 7;
+}
+.site-footer a { text-decoration: none; }
+.site-footer a:hover { color: var(--blue); }
+
+/* ---------- Tablette et mobile ---------- */
+@media (max-width: 900px) {
+  :root { --text-w: 86vw; }
+  .big { font-size: clamp(34px, 9vw, 68px); }
+  .big--m { font-size: clamp(28px, 7.2vw, 56px); }
+}
+
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .screen { padding: 48px 18px; }
+  .js .pen { width: 34px; height: 34px; margin: -17px 0 0 -17px; }
+  .big { font-size: clamp(32px, 10vw, 46px); }
+  .big--m { font-size: clamp(26px, 8vw, 38px); }
+  .contact li { flex-direction: column; gap: 0; }
+  .site-footer { flex-direction: column; align-items: center; gap: 2px; font-size: 12px; bottom: 14px; }
+  .counter { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint__arrow { animation: none; }
+}

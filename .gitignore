@@ -1,0 +1,18 @@
+# Système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+
+# Secrets / config locale
+.env
+.env.*
+*.local
+sftp-config.json
+
+# Claude
+.claude/
