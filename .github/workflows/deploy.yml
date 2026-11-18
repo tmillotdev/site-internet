@@ -1,0 +1,44 @@
+name: Déploiement OVH
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-ovh
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer lftp
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      - name: Envoyer le site par SFTP
+        env:
+          SFTP_HOST: ${{ secrets.OVH_SFTP_HOST }}
+          SFTP_USER: ${{ secrets.OVH_SFTP_USER }}
+          SFTP_PASSWORD: ${{ secrets.OVH_SFTP_PASSWORD }}
+          REMOTE_DIR: ${{ vars.OVH_REMOTE_DIR || 'www' }}
+        run: |
+          # Le mot de passe est passé via la variable LFTP_PASSWORD (option --env-password)
+          # pour ne jamais apparaître dans la ligne de commande ni dans les logs.
+          export LFTP_PASSWORD="$SFTP_PASSWORD"
+          lftp -u "$SFTP_USER" --env-password "sftp://$SFTP_HOST:22" <<LFTP
+          set sftp:auto-confirm yes
+          set net:max-retries 2
+          set net:timeout 30
+          mirror --reverse --verbose --parallel=4 \
+            --exclude-glob .git/ \
+            --exclude-glob .github/ \
+            --exclude-glob .gitignore \
+            --exclude-glob .claude/ \
+            --exclude-glob README.md \
+            ./ "$REMOTE_DIR"/
+          bye
+          LFTP
