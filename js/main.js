@@ -42,6 +42,8 @@
   document.querySelector('.counter__total').textContent = String(N).padStart(2, '0');
 
   let vh = window.innerHeight, vw = window.innerWidth;
+  const MOBILE_Q = '(max-width: 700px)';
+  let mob = window.matchMedia(MOBILE_Q).matches; // version mobile : effets recomposés pour rester dans l'écran
   let strokeTravel = 8, strokeFrame = 7, strokeFine = 2.4;
   let penScaleHome = 1;
 
@@ -161,6 +163,7 @@
         padO = clamp(36, 90, vw * 0.05);
         padT = clamp(10, 22, vw * 0.012);
         mark = clamp(26, 72, vw * 0.04);
+        if (mob) { padO = Math.max(8, Math.min(34, (vw - box.w) / 2 - 4)); padT = Math.min(8, padO); mark = 22; }
         const C = corners(padO), CT = corners(padT);
         self.in = C[0]; self.inDir = [-1, -0.7];
         self.out = CT[2]; self.outDir = [0.5, 1];
@@ -273,7 +276,13 @@
         const pad = clamp(28, 70, vw * 0.04);
         const L = box.x - pad, T = box.y - pad, W = box.w + 2 * pad, H = box.h + 2 * pad;
         const rnd = makeRnd(17 + idx);
-        const base = [[0, 0.2], [0.28, 0], [0.6, -0.03], [1, 0.08], [1.02, 0.58], [0.76, 1], [0.42, 1.04], [0.06, 0.9]];
+        let base = [[0, 0.2], [0.28, 0], [0.6, -0.03], [1, 0.08], [1.02, 0.58], [0.76, 1], [0.42, 1.04], [0.06, 0.9]];
+        if (mob) {
+          // mobile : le texte occupe presque toute la largeur, le réseau se déploie au-dessus et au-dessous
+          const gap = 46, W2 = vw - 20, sy = rel(screen).y, top = Math.max(sy + 30, box.y - gap * 1.6), bot = Math.min(sy + vh - 44, box.y + box.h + gap * 1.6);
+          const pts = [[0.02, top + 10], [0.3, top - 6], [0.6, top + 22], [0.98, top], [0.9, bot - 8], [0.62, bot + 14], [0.32, bot - 6], [0.04, bot + 10]];
+          P = pts.map(([u, y]) => pt(10 + u * W2, y));
+        } else
         P = base.map(([u, v]) => pt(clamp(16, vw - 16, L + u * W + rnd() * W * 0.03), T + v * H + rnd() * 14));
         const segs = smoothSegs(P);
         cum = [0];
@@ -330,13 +339,18 @@
         const box = rel(scene);
         const c = pt(box.x + box.w / 2, box.y + box.h / 2);
         const pad = clamp(40, 110, vw * 0.06);
-        const rx = Math.min(box.w / 2 + pad, vw / 2 - 18);
-        const ry = Math.min(box.h / 2 + pad * 0.75, vh / 2 - 18);
-        const tilt = -6 * Math.PI / 180, turns = 1.1, n = 200;
+        const rx = mob ? vw / 2 - 20 : Math.min(box.w / 2 + pad, vw / 2 - 18);
+        const ry = mob ? Math.min(box.h / 2 + 62, vh / 2 - 14) : Math.min(box.h / 2 + pad * 0.75, vh / 2 - 18);
+        let tilt = -6 * Math.PI / 180, turns = 1.1, n = 200;
+        let ex = 1;
+        if (mob) { // rectangle arrondi autour du texte, sans le toucher
+          tilt = 0; turns = 1.05; ex = 6;
+        }
         const pts = [];
         for (let i = 0; i <= n; i++) {
           const t = (i / n) * turns, a = Math.PI + t * 2 * Math.PI, gr = 1 + 0.05 * t;
-          const x0 = rx * gr * Math.cos(a), y0 = ry * gr * Math.sin(a);
+          const sg = v => Math.sign(v) * Math.pow(Math.abs(v), 2 / ex);
+          const x0 = rx * gr * (mob ? sg(Math.cos(a)) : Math.cos(a)), y0 = ry * gr * (mob ? sg(Math.sin(a)) : Math.sin(a));
           pts.push(pt(c.x + x0 * Math.cos(tilt) - y0 * Math.sin(tilt), c.y + x0 * Math.sin(tilt) + y0 * Math.cos(tilt)));
         }
         path.setAttribute('d', 'M ' + pts.map(p => `${R(p.x)} ${R(p.y)}`).join(' L '));
@@ -400,6 +414,10 @@
         const bot = Math.max(top + 50, box.y - 50);
         const ys = [0.55, 0.12, 0.7, 0.22, 0.88, 0.4];
         P = names.map((_, i) => pt(vw * (0.1 + 0.8 * i / Math.max(1, N - 1)), lerp(top, bot, ys[i % ys.length])));
+        if (mob) { // 2 rangées de 3, libellés lisibles
+          const xs = [0.2, 0.5, 0.8], r1 = top, r2 = Math.min(top + 80, Math.max(top + 40, box.y - 70));
+          P = names.map((_, i) => pt(vw * xs[i % 3] + (i % 2 ? 6 : -6), i < 3 ? r1 : r2));
+        }
         // le lien part du point « contact » et remonte le parcours
         const order = names.map((_, i) => i).sort((a, b) => Math.abs(a - idx) - Math.abs(b - idx));
         let d = `M ${R(P[order[0]].x)} ${R(P[order[0]].y)}`;
@@ -487,6 +505,7 @@
 
   /* ---------- Mise en page ---------- */
   function layout() {
+    mob = window.matchMedia(MOBILE_Q).matches;
     vh = window.innerHeight; vw = window.innerWidth;
     strokeTravel = clamp(5, 10, vw * 0.0062);
     strokeFrame = strokeTravel * 0.85;
@@ -604,6 +623,8 @@
     clearTimeout(rz);
     rz = setTimeout(() => {
       if (busy) return;
+      // mobile : la barre d'adresse qui se replie change seulement la hauteur, on ne recalcule pas
+      if (mob && window.innerWidth === vw && Math.abs(window.innerHeight - vh) < 160) return;
       layout();
       gsap.set(world, { y: -current * vh });
       fxs.forEach((f, i) => (visited.has(i) ? f.done() : f.reset()));
